@@ -2,27 +2,29 @@ import React, { useEffect } from "react";
 import { MDBDataTable } from "mdbreact";
 import { FaRegEye, FaRupeeSign } from "react-icons/fa6";
 import Loader from "../layouts/Loader";
-import { useAlert } from "react-alert";
+import { toast } from "react-toastify"; // Import toast from react-toastify
 import { useDispatch, useSelector } from "react-redux";
 import { clearErrors, myOrders } from "../../actions/orderAction";
 import { getRestaurants } from "../../actions/restaurantAction";
 import { Link } from "react-router-dom";
+
 const ListOrders = () => {
-  const alert = useAlert();
   const dispatch = useDispatch();
   const { loading, error, orders } = useSelector((state) => state.myOrders);
   const restaurants = useSelector((state) => state.restaurants);
   const restaurantList = Array.isArray(restaurants.restaurants)
     ? restaurants.restaurants
     : [];
+
   useEffect(() => {
     dispatch(myOrders());
     dispatch(getRestaurants());
     if (error) {
-      alert.error(error);
+      toast.error(error); // Use toast for error messages
       dispatch(clearErrors());
     }
-  }, [dispatch, alert, error]);
+  }, [dispatch, error]);
+
   const setOrders = () => {
     const data = {
       columns: [
@@ -41,7 +43,6 @@ const ListOrders = () => {
           field: "numOfItems",
           sort: "asc",
         },
-
         {
           label: "Amount",
           field: "amount",
@@ -65,6 +66,7 @@ const ListOrders = () => {
       ],
       rows: [],
     };
+
     if (orders && orders.length > 0 && restaurantList.length > 0) {
       const sortedOrders = orders.sort(
         (a, b) => new Date(b.createdAt) - new Date(a.createdAt)
@@ -72,10 +74,11 @@ const ListOrders = () => {
       sortedOrders.forEach((order) => {
         const orderItemNames = order.orderItems
           .map((item) => item.name)
-          .join(",");
+          .join(", ");
         const restaurant = restaurantList.find(
           (restaurant) => restaurant._id.toString() === order.restaurant._id
         );
+
         data.rows.push({
           restaurant: restaurant?.name || "unknown Restaurant",
           numOfItems: order.orderItems.length,
@@ -104,11 +107,11 @@ const ListOrders = () => {
     }
     return data;
   };
+
   return (
     <>
       <div className="cartt">
         <h1 className="my-5">My Orders</h1>
-
         {loading ? (
           <Loader />
         ) : (

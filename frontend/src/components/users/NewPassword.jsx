@@ -1,41 +1,38 @@
-import React, { useEffect } from "react";
-import { useAlert } from "react-alert";
-import { useDispatch } from "react-redux";
+import React, { useEffect, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
 import { useNavigate, useParams } from "react-router-dom";
+import { toast } from "react-toastify"; // Import toast from react-toastify
 import { clearErrors, resetPassword } from "../../actions/userAction";
-import { useState } from "react";
-import { useSelector } from "react-redux";
 
 const NewPassword = () => {
+  const [password, setPassword] = useState("");
+  const [passwordConfirm, setPasswordConfirm] = useState("");
 
-  const [password, setPassword]=useState("");
-  const [passwordConfirm, setPasswordConfirm]=useState("");
+  const dispatch = useDispatch();
+  const { error, success } = useSelector((state) => state.forgotPassword);
+  const { token } = useParams();
+  const navigate = useNavigate();
 
-  const alert=useAlert();
-  const dispatch=useDispatch();
-
-  const {error, success}=useSelector((state)=>state.forgotPassword);
-  const {token}=useParams();
-  const navigate=useNavigate();
-  useEffect(()=>{
-    if (error){
-      alert.error(error);
+  useEffect(() => {
+    if (error) {
+      toast.error(error); // Use toast for error messages
       dispatch(clearErrors());
     }
-    if(success){
-      alert.success("password updated successfully");
+    if (success) {
+      toast.success("Password updated successfully"); // Use toast for success message
       navigate("/users/login");
     }
-  },[dispatch,alert,error,success,navigate]);
+  }, [dispatch, error, success, navigate]);
 
-  const submitHandler=(e)=>{
+  const submitHandler = (e) => {
     e.preventDefault();
-    const formData=new FormData();
-    formData.set("password",password);
-    formData.set("passwordConfirm",passwordConfirm);
+    const formData = new FormData();
+    formData.set("password", password);
+    formData.set("passwordConfirm", passwordConfirm);
 
-    dispatch(resetPassword(token,formData));
+    dispatch(resetPassword(token, formData));
   };
+
   return (
     <>
       <div className="row wrapper">
@@ -49,7 +46,7 @@ const NewPassword = () => {
                 id="password_field"
                 className="form-control"
                 value={password}
-                onChange={(e)=>setPassword(e.target.value)}
+                onChange={(e) => setPassword(e.target.value)}
               />
             </div>
 
@@ -60,7 +57,7 @@ const NewPassword = () => {
                 id="confirm_password_field"
                 className="form-control"
                 value={passwordConfirm}
-                onChange={(e)=>setPasswordConfirm(e.target.value)}
+                onChange={(e) => setPasswordConfirm(e.target.value)}
               />
             </div>
 

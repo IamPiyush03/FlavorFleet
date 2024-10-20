@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
-import { useAlert } from "react-alert";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
+import { ToastContainer, toast } from "react-toastify"; // Import toast
 import { UPDATE_PROFILE_RESET } from "../../constants/UserConstant";
 import { clearErrors, loadUser, updateProfile } from "../../actions/userAction";
 
@@ -11,30 +11,29 @@ const UpdateProfile = () => {
   const [avatar, setAvatar] = useState("");
   const [avatarPreview, setAvatarPreview] = useState("/images/images.png");
 
-  const alert = useAlert();
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const { user } = useSelector((state) => state.auth);
   const { error, isUpdated, loading } = useSelector((state) => state.user);
+
   useEffect(() => {
     if (user) {
       setName(user.name);
       setEmail(user.email);
-      setAvatarPreview(user.avatar.url);
+      setAvatarPreview(user.avatar.url || "/images/images.png");
     }
     if (error) {
-      alert.error(error);
+      toast.error(error); // Use toast for errors
       dispatch(clearErrors());
     }
     if (isUpdated) {
-      alert.success("user updated successfully");
+      toast.success("User updated successfully"); // Use toast for success
       dispatch(loadUser());
       navigate("/users/me");
-      dispatch({
-        type: UPDATE_PROFILE_RESET,
-      });
+      dispatch({ type: UPDATE_PROFILE_RESET });
     }
-  }, [dispatch, alert, error, navigate, isUpdated, user]);
+  }, [dispatch, error, navigate, isUpdated, user]);
+
   const submitHandler = (e) => {
     e.preventDefault();
 
@@ -54,10 +53,14 @@ const UpdateProfile = () => {
         setAvatar(reader.result);
       }
     };
-    reader.readAsDataURL(e.target.files[0]);
+    if (e.target.files[0]) {
+      reader.readAsDataURL(e.target.files[0]);
+    }
   };
+
   return (
     <>
+      <ToastContainer /> {/* Add ToastContainer */}
       <div className="row wrapper">
         <div className="col-10 col-lg-5 updateprofile">
           <form
@@ -75,7 +78,8 @@ const UpdateProfile = () => {
                 name="name"
                 value={name}
                 onChange={(e) => setName(e.target.value)}
-              ></input>
+                required // Optional: Make field required for better UX
+              />
             </div>
             <div className="form-group">
               <label htmlFor="email_field">Email</label>
@@ -86,7 +90,8 @@ const UpdateProfile = () => {
                 name="email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-              ></input>
+                required // Optional: Make field required for better UX
+              />
             </div>
 
             <div className="form-group">
@@ -109,7 +114,7 @@ const UpdateProfile = () => {
                     id="customFile"
                     accept="images/*"
                     onChange={onChange}
-                  ></input>
+                  />
                   <label className="custom-file-label" htmlFor="customFile">
                     Choose Avatar
                   </label>
@@ -120,7 +125,7 @@ const UpdateProfile = () => {
             <button
               type="submit"
               className="btn btn-block py-3"
-              disabled={loading ? true : false}
+              disabled={loading}
             >
               UPDATE
             </button>

@@ -1,19 +1,20 @@
 import React from "react";
 import Search from "./search";
 import { Link } from "react-router-dom";
-import { useAlert } from "react-alert";
 import { useDispatch, useSelector } from "react-redux";
 import { logout } from "../../actions/userAction";
+import { toast } from "react-toastify"; // Import toast from react-toastify
+
 export default function Header() {
-  const alert = useAlert();
   const dispatch = useDispatch();
   const { user, loading } = useSelector((state) => state.auth);
   const { cartItems } = useSelector((state) => state.cart);
 
   const logoutHandler = () => {
     dispatch(logout());
-    alert.success("Logged Out Successfully");
+    toast.success("Logged Out Successfully"); // Use toast for success message
   };
+
   return (
     <nav className="navbar row sticky-top">
       {/* logo */}
@@ -22,7 +23,7 @@ export default function Header() {
           <img src="/images/logo.webp" alt="logo" className="logo" />
         </Link>
       </div>
-      {/* Serach Bar and Search Icon */}
+      {/* Search Bar and Search Icon */}
       <div className="col-12 col-md-6 mt-2 mt-md-6">
         <Search />
       </div>

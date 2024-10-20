@@ -1,33 +1,32 @@
-import React, { useEffect } from "react";
-import { useAlert } from "react-alert";
-import { useDispatch,useSelector } from "react-redux";
-import {clearErrors, forgotPassword} from"../../actions/userAction";
+import React, { useEffect, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { clearErrors, forgotPassword } from "../../actions/userAction";
+import { toast } from "react-toastify"; // Import toast from react-toastify
 
-import { useState } from "react";
 const ForgotPassword = () => {
-  const [email, setEmail]=useState("");
+  const [email, setEmail] = useState("");
 
-  const alert=useAlert();
-  const dispatch=useDispatch();
+  const dispatch = useDispatch();
 
-  const {error,loading,message}=useSelector(
-    (state)=>state.forgotPassword
-  );
-  useEffect(()=>{
-    if(error){
-      alert.error(error);
+  const { error, loading, message } = useSelector((state) => state.forgotPassword);
+
+  useEffect(() => {
+    if (error) {
+      toast.error(error); // Use toast for error messages
       dispatch(clearErrors());
     }
-    if(message){
-      alert.success(message);
+    if (message) {
+      toast.success(message); // Use toast for success messages
     }
-  },[dispatch,alert,error,message]);
-  const submitHandler=(e)=>{
-     e.preventDefault();
-  const formData=new FormData();
-    formData.set("email",email);
+  }, [dispatch, error, message]);
+
+  const submitHandler = (e) => {
+    e.preventDefault();
+    const formData = new FormData();
+    formData.set("email", email);
     dispatch(forgotPassword(formData));
   };
+
   return (
     <>
       <div className="row wrapper">
@@ -41,14 +40,14 @@ const ForgotPassword = () => {
                 id="email_field"
                 className="form-control"
                 value={email}
-                onChange={(e)=>setEmail(e.target.value)}
+                onChange={(e) => setEmail(e.target.value)}
               />
             </div>
             <button
               id="forgot_password_button"
               type="submit"
               className="btn btn-block py-3"
-              disabled={loading? true:false}
+              disabled={loading ? true : false}
             >
               Send Email
             </button>

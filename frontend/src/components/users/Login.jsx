@@ -2,29 +2,26 @@ import React, { useEffect, useState } from "react";
 import Loader from "../layouts/Loader";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate, Link } from "react-router-dom";
-import { useAlert } from "react-alert";
+import { toast } from "react-toastify"; // Import toast from react-toastify
 import { clearErrors, login } from "../../actions/userAction";
 
 const Login = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const alert = useAlert();
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  const { isAuthenticated, loading, error } = useSelector(
-    (state) => state.auth
-  );
-  //handle the form submission
+  const { isAuthenticated, loading, error } = useSelector((state) => state.auth);
 
   useEffect(() => {
     if (isAuthenticated) {
       navigate("/");
     }
     if (error) {
-      alert.error(error);
+      toast.error(error); // Use toast for error messages
       dispatch(clearErrors());
     }
-  }, [dispatch, alert, isAuthenticated, error, navigate]);
+  }, [dispatch, error, isAuthenticated, navigate]);
+
   const submitHandler = (e) => {
     e.preventDefault();
     dispatch(login(email, password));
@@ -48,11 +45,11 @@ const Login = () => {
                     className="form-control"
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
-                  ></input>
+                  />
                 </div>
-                <div className="form-group ">
+                <div className="form-group">
                   <label htmlFor="password_field">
-                    Password <span>( not less than 8 character)</span>
+                    Password <span>(not less than 8 characters)</span>
                   </label>
                   <input
                     type="password"
@@ -60,7 +57,7 @@ const Login = () => {
                     className="form-control"
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
-                  ></input>
+                  />
                 </div>
                 <Link to="/users/forgotPassword" className="float-right mb-4">
                   Forgot Password
@@ -68,7 +65,7 @@ const Login = () => {
                 <button
                   id="login_button"
                   type="submit"
-                  className="btn btn-block py3"
+                  className="btn btn-block py-3"
                 >
                   LOGIN
                 </button>

@@ -1,36 +1,38 @@
 import React, { Fragment, useEffect } from "react";
 import Loader from "../layouts/Loader";
 import { LiaRupeeSignSolid } from "react-icons/lia";
-import { useAlert } from "react-alert";
+import { toast } from "react-toastify"; // Import toast from react-toastify
 import { useDispatch, useSelector } from "react-redux";
-import { useParams } from "react-router-dom";
+import { useParams, Link } from "react-router-dom";
 import { clearErrors, getOrderDetails } from "../../actions/orderAction";
-import { Link } from "react-router-dom";
+
 const OrderDetails = () => {
-const alert=useAlert();
-const dispatch=useDispatch();
-const {id}=useParams();
+  const dispatch = useDispatch();
+  const { id } = useParams();
 
-const {loading,error,order={},}=useSelector((state)=>state.orderDetails);
-const {deliveryInfo,
-orderItems,
-paymentInfo,
-user,
-finalTotal,
-orderStatus}=order;
+  const { loading, error, order = {} } = useSelector((state) => state.orderDetails);
+  const {
+    deliveryInfo,
+    orderItems,
+    paymentInfo,
+    user,
+    finalTotal,
+    orderStatus,
+  } = order;
 
-useEffect(()=>{
-  dispatch(getOrderDetails(id));
-  if(error){
-    alert.error(error);
-    dispatch(clearErrors());
-  }
-},[dispatch,alert,error,id]);
+  useEffect(() => {
+    dispatch(getOrderDetails(id));
+    if (error) {
+      toast.error(error); // Use toast for error messages
+      dispatch(clearErrors());
+    }
+  }, [dispatch, error, id]);
 
-const deliveryDetails=deliveryInfo && `${deliveryInfo.city}, ${deliveryInfo.postalCode}
-${deliveryInfo.country}`;
+  const deliveryDetails =
+    deliveryInfo && `${deliveryInfo.city}, ${deliveryInfo.postalCode} ${deliveryInfo.country}`;
 
-const isPaid= paymentInfo && paymentInfo.status==="paid" ? true:false;
+  const isPaid = paymentInfo && paymentInfo.status === "paid" ? true : false;
+
   return (
     <>
       {loading ? (
@@ -49,8 +51,7 @@ const isPaid= paymentInfo && paymentInfo.status==="paid" ? true:false;
                 <b>Phone:</b> {deliveryInfo && deliveryInfo.phoneNo}
               </p>
               <p className="mb-4">
-                <b>Address:</b>
-               {deliveryDetails}
+                <b>Address:</b> {deliveryDetails}
               </p>
               <p>
                 <b>Amount:</b> <LiaRupeeSignSolid /> {finalTotal}
@@ -59,18 +60,20 @@ const isPaid= paymentInfo && paymentInfo.status==="paid" ? true:false;
               <hr />
 
               <h4 className="my-4">
-                Payment :
+                Payment:
                 <span className={isPaid ? "greenColor" : "redColor"}>
                   <b>{isPaid ? " PAID" : " NOT PAID"}</b>
                 </span>
               </h4>
               <h4 className="my-4">
-                Order Status :
+                Order Status:
                 <span
-                 className={
-                  order.orderStatus &&
-                  String(order.orderStatus).includes("delivered")
-                  ? "greenColor" : "redColor"}>
+                  className={
+                    order.orderStatus && String(order.orderStatus).includes("delivered")
+                      ? "greenColor"
+                      : "redColor"
+                  }
+                >
                   <b>{orderStatus}</b>
                 </span>
               </h4>
@@ -98,7 +101,7 @@ const isPaid= paymentInfo && paymentInfo.status==="paid" ? true:false;
 
                       <div className="col-4 col-lg-2 mt-4 mt-lg-0">
                         <p>
-                         <LiaRupeeSignSolid/>
+                          <LiaRupeeSignSolid />
                           {item.price}
                         </p>
                       </div>
@@ -108,7 +111,7 @@ const isPaid= paymentInfo && paymentInfo.status==="paid" ? true:false;
                       </div>
                     </div>
                   ))}
-              </div> }
+              </div>}
               <hr />
             </div>
           </div>

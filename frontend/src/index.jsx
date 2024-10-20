@@ -3,26 +3,23 @@ import ReactDOM from "react-dom/client";
 import App from "./App";
 import { Provider } from "react-redux";
 import store from "./store";
-import { transitions,positions,Provider as AlertProvider } from "react-alert";
-import AlertTemplate from "react-alert-template-basic";
+import { ToastContainer } from "react-toastify";
+import 'react-toastify/dist/ReactToastify.css'; // Import Toastify styles
 
-const options={
-  position:positions.BOTTOM_CENTER,
-  timeout:5000,
-  offset:'30px',
-  transition:transitions.SCALE,
-}
 const root = ReactDOM.createRoot(document.getElementById("root"));
 root.render(
   <Provider store={store}>
-  <React.StrictMode>
-    <AlertProvider template={AlertTemplate} {...options}>
-    <App />
-    </AlertProvider>
-  </React.StrictMode>
+    <React.StrictMode>
+      <App />
+      <ToastContainer 
+        position="bottom-center" // Position of the toast
+        autoClose={5000} // Duration for which the toast is visible
+        hideProgressBar={false} // Show progress bar
+        closeOnClick // Close on click
+        draggable // Allow dragging
+        pauseOnHover // Pause on hover
+        theme="light" // Theme of the toast
+      />
+    </React.StrictMode>
   </Provider>
 );
-
-// If you want to start measuring performance in your app, pass a function
-// to log results (for example: reportWebVitals(console.log))
-// or send to an analytics endpoint. Learn more: https://bit.ly/CRA-vitals

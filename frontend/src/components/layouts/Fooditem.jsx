@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from "react";
-import { useAlert } from "react-alert";
 import { LiaRupeeSignSolid } from "react-icons/lia";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
@@ -8,6 +7,7 @@ import {
   removeItemFromCart,
   updateCartQuantity,
 } from "../../actions/cartAction";
+import { toast } from "react-toastify"; // Import toast
 
 export default function FoodItem({ fooditem, restaurant }) {
   const [quantity, setQuantity] = useState(1);
@@ -17,7 +17,6 @@ export default function FoodItem({ fooditem, restaurant }) {
 
   const navigate = useNavigate();
   const dispatch = useDispatch();
-  const alert = useAlert();
 
   const cartItems = useSelector((state) => state.cart.cartItems);
 
@@ -38,9 +37,9 @@ export default function FoodItem({ fooditem, restaurant }) {
     if (quantity < fooditem.stock) {
       const newQuantity = quantity + 1;
       setQuantity(newQuantity);
-      dispatch(updateCartQuantity(fooditem._id, newQuantity, alert));
+      dispatch(updateCartQuantity(fooditem._id, newQuantity));
     } else {
-      alert.error("Exceed stock Limit");
+      toast.error("Exceed stock limit"); // Replace alert.error with toast.error
     }
   };
 
@@ -48,7 +47,7 @@ export default function FoodItem({ fooditem, restaurant }) {
     if (quantity > 1) {
       const newQuantity = quantity - 1;
       setQuantity(newQuantity);
-      dispatch(updateCartQuantity(fooditem._id, newQuantity, alert));
+      dispatch(updateCartQuantity(fooditem._id, newQuantity));
     } else {
       setQuantity(0);
       setShowButtons(false);
@@ -61,8 +60,9 @@ export default function FoodItem({ fooditem, restaurant }) {
       return navigate("/users/login");
     }
     if (fooditem && fooditem._id) {
-      dispatch(addItemToCart(fooditem._id, restaurant, quantity, alert));
+      dispatch(addItemToCart(fooditem._id, restaurant, quantity));
       setShowButtons(true);
+      toast.success("Added to cart!"); // Notify user on successful addition
     } else {
       console.error("Food item id is not defined");
     }

@@ -1,68 +1,57 @@
-import React, {useState, useEffect} from "react";
-import {useAlert} from "react-alert";
-import {useDispatch, useSelector} from "react-redux";
+import React, { useState, useEffect } from "react";
+import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
+import { toast } from "react-toastify"; // Import toast from react-toastify
 import { clearErrors, register } from "../../actions/userAction";
 
-
-
-
 const Register = () => {
-
-  const alert = useAlert();
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
   const [user, setUser] = useState({
-    name:"",
-    email:"",
-    password:"",
-    passwordConfirm:"",
-    phoneNumber:"",
+    name: "",
+    email: "",
+    password: "",
+    passwordConfirm: "",
+    phoneNumber: "",
   });
 
-
-  const {name, email, password, passwordConfirm, phoneNumber} = user;
+  const { name, email, password, passwordConfirm, phoneNumber } = user;
 
   const [avatar, setAvatar] = useState("");
   const [avatarPreview, setAvatarPreview] = useState("/images/images.png");
 
+  const { isAuthenticated, error, loading } = useSelector((state) => state.auth);
 
-  const {isAuthenticated, error, loading} = useSelector((state) => state.auth);
-
-
-  //Handle Redirection with useEffect...
-
+  // Handle Redirection with useEffect...
   useEffect(() => {
-    if(isAuthenticated)
-    {
+    if (isAuthenticated) {
       navigate("/");
     }
-    if(error){
-      alert.error(error);
-      dispatch(clearErrors())
+    if (error) {
+      toast.error(error); // Use toast for error messages
+      dispatch(clearErrors());
     }
-  },[dispatch, alert, isAuthenticated, error, navigate]);
-
+  }, [dispatch, error, isAuthenticated, navigate]);
 
   const submitHandler = (e) => {
     e.preventDefault();
 
-    if(password !== passwordConfirm){
-      alert.error("Password Didn't Matched");
+    if (password !== passwordConfirm) {
+      toast.error("Passwords didn't match"); // Use toast for password mismatch
       return;
     }
 
-    const formData =new FormData();
-    formData.set("name", name); //Key : value
+    const formData = new FormData();
+    formData.set("name", name); // Key : value
     formData.set("email", email);
     formData.set("password", password);
     formData.set("passwordConfirm", passwordConfirm);
     formData.set("phoneNumber", phoneNumber);
 
-    if(avatar === ""){
+    if (avatar === "") {
       formData.set("avatar", "/images/images.png");
-    }else{
+    } else {
       formData.set("avatar", avatar);
     }
 
@@ -70,20 +59,19 @@ const Register = () => {
   };
 
   const onChange = (e) => {
-    if(e.target.name === "avatar"){
+    if (e.target.name === "avatar") {
       const reader = new FileReader();
       reader.onload = () => {
-        if(reader.readyState === 2){
+        if (reader.readyState === 2) {
           setAvatarPreview(reader.result);
-          setAvatar (reader.result);
+          setAvatar(reader.result);
         }
       };
       reader.readAsDataURL(e.target.files[0]);
-    }else{
-      setUser({...user, [e.target.name] : e.target.value});
+    } else {
+      setUser({ ...user, [e.target.name]: e.target.value });
     }
-  }
-
+  };
 
   return (
     <>
@@ -100,7 +88,7 @@ const Register = () => {
                 name="name"
                 value={name}
                 onChange={onChange}
-              ></input>
+              />
             </div>
             <div className="form-group">
               <label htmlFor="email_field">Email</label>
@@ -111,7 +99,7 @@ const Register = () => {
                 name="email"
                 value={email}
                 onChange={onChange}
-              ></input>
+              />
             </div>
             <div className="form-group">
               <label htmlFor="password_field">Password</label>
@@ -122,7 +110,7 @@ const Register = () => {
                 name="password"
                 value={password}
                 onChange={onChange}
-              ></input>
+              />
             </div>
             <div className="form-group">
               <label htmlFor="passwordConfirm_field">Password Confirm</label>
@@ -133,7 +121,7 @@ const Register = () => {
                 name="passwordConfirm"
                 value={passwordConfirm}
                 onChange={onChange}
-              ></input>
+              />
             </div>
             <div className="form-group">
               <label htmlFor="phoneNumber_field">Phone Number</label>
@@ -144,7 +132,7 @@ const Register = () => {
                 name="phoneNumber"
                 value={phoneNumber}
                 onChange={onChange}
-              ></input>
+              />
             </div>
             <div className="form-group">
               <label htmlFor="avatar_upload">Avatar</label>
@@ -166,7 +154,7 @@ const Register = () => {
                     id="customFile"
                     accept="images/*"
                     onChange={onChange}
-                  ></input>
+                  />
                   <label className="custom-file-label" htmlFor="customFile">
                     Choose Avatar
                   </label>
@@ -178,7 +166,7 @@ const Register = () => {
               id="register_button"
               type="submit"
               className="btn btn-block py-3"
-              disabled={loading ? true : false}
+              disabled={loading}
             >
               REGISTER
             </button>

@@ -5,77 +5,43 @@ import {
   removeItemFromCart,
   updateCartQuantity,
 } from "../../actions/cartAction";
-import { useAlert } from "react-alert";
+import { toast } from "react-toastify"; // Import toast from react-toastify
 import { payment } from "../../actions/orderAction";
 import { useDispatch, useSelector } from "react-redux";
-// let fakeCartItems = [
-//   {
-//     foodItem: {
-//       images: [
-//         {
-//           public_id: "kaala_channa_chat image",
-//           url: "https://b.zmtcdn.com/data/dish_photos/94a/c01f4e8fcce05666b8a28eadd627394a.jpg?fit=around|130:130&crop=130:130;*,*",
-//           _id: "1",
-//         },
-//       ],
-//       name: "Kaala Channa Chat",
-//       price: 120,
-//       _id: "123",
-//     },
-//     quantity: 1,
-//     _id: "cart123",
-//   },
-//   {
-//     foodItem: {
-//       images: [
-//         {
-//           public_id: "Pani puri image",
-//           url: "https://media-assets.swiggy.com/swiggy/image/upload/fl_lossy,f_auto,q_auto,h_600/FOOD_CATALOG/IMAGES/CMS/2024/3/11/b3734c76-eba3-4509-86ed-aa774e6336e4_e7abf189-300f-4cc7-bc9b-fc42a24c8178.png_compressed",
-//           _id: "2",
-//         },
-//       ],
-//       name: "Pani puri",
-//       price: 50,
-//       _id: "456",
-//     },
-//     quantity: 1,
-//     _id: "cart456",
-//   },
-// ];
 
 const Cart = () => {
   const dispatch = useDispatch();
-  const alert = useAlert();
   const { cartItems, restaurant } = useSelector((state) => state.cart);
 
   useEffect(() => {
-    dispatch(fetchCartItems(alert));
-  }, [dispatch, alert]);
+    dispatch(fetchCartItems());
+  }, [dispatch]);
 
   const removeCartItemHandler = (id) => {
-    dispatch(removeItemFromCart(id, alert));
+    dispatch(removeItemFromCart(id));
   };
 
   const increaseQty = (id, quantity, stock) => {
     const newQty = quantity + 1;
     if (newQty > stock) {
-      alert.error("Exceeded stock limit");
+      toast.error("Exceeded stock limit"); // Use toast for error message
     }
-    dispatch(updateCartQuantity(id, newQty, alert));
+    dispatch(updateCartQuantity(id, newQty));
   };
 
   const decreaseQty = (id, quantity) => {
     if (quantity > 1) {
       const newQty = quantity - 1;
-      dispatch(updateCartQuantity(id, newQty, alert));
+      dispatch(updateCartQuantity(id, newQty));
     } else {
-      alert.error("Minimum  Quantity reached");
+      toast.error("Minimum quantity reached"); // Use toast for error message
     }
   };
 
   const checkoutHandler = () => {
     dispatch(payment(cartItems, restaurant));
   };
+
   return (
     <>
       {cartItems.length === 0 ? (
@@ -95,14 +61,12 @@ const Cart = () => {
                 <div className="cart-item" key={item._id}>
                   <div className="row">
                     <div className="col-4 col-lg-3">
-                      {
-                        <img
-                          src={item.foodItem.images[0].url}
-                          alt="items"
-                          height="90"
-                          width="115"
-                        />
-                      }
+                      <img
+                        src={item.foodItem.images[0].url}
+                        alt="items"
+                        height="90"
+                        width="115"
+                      />
                     </div>
                     <div className="col-5 col-lg-3">{item.foodItem.name}</div>
                     <div className="col-4 col-lg-2 mt-4 mt-lg-0">
@@ -116,7 +80,7 @@ const Cart = () => {
                         <span
                           className="btn btn-danger minus"
                           onClick={() =>
-                            decreaseQty(item.foodItem, item.quantity)
+                            decreaseQty(item.foodItem._id, item.quantity)
                           }
                         >
                           -
@@ -131,9 +95,9 @@ const Cart = () => {
                           className="btn btn-primary plus"
                           onClick={() =>
                             increaseQty(
-                              item.foodItem,
+                              item.foodItem._id,
                               item.quantity,
-                              item.stock
+                              item.foodItem.stock
                             )
                           }
                         >
@@ -145,7 +109,7 @@ const Cart = () => {
                       <i
                         id="delete_cart_item"
                         className="fa fa-trash btn btn-danger"
-                        onClick={() => removeCartItemHandler(item.foodItem)}
+                        onClick={() => removeCartItemHandler(item._id)}
                       ></i>
                     </div>
                   </div>
@@ -158,35 +122,23 @@ const Cart = () => {
                 <h4>Order Summary</h4>
                 <hr />
                 <p>
-                  Subtotal:
-                  <span className="order-summary-values">
-                    {cartItems.reduce(
-                      (acc, item) => acc + Number(item.quantity),
-                      0
-                    )}
-                    (Units)
-                  </span>
+                  Total Items: <b>{cartItems.length}</b>
                 </p>
                 <p>
-                  Total:
-                  <span className="order-summary-values">
+                  Total Price: <b>
                     <LiaRupeeSignSolid />
-                    {cartItems
-                      .reduce(
-                        (acc, item) =>
-                          acc + item.quantity * item.foodItem.price,
-                        0
-                      )
-                      .toFixed(2)}
-                  </span>
+                    {cartItems.reduce(
+                      (acc, item) => acc + item.foodItem.price * item.quantity,
+                      0
+                    )}
+                  </b>
                 </p>
-                <hr />
                 <button
                   id="checkout_btn"
                   className="btn btn-primary btn-block"
                   onClick={checkoutHandler}
                 >
-                  Check Out
+                  Checkout
                 </button>
               </div>
             </div>

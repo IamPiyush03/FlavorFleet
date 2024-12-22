@@ -42,8 +42,3 @@ A MERN stack-based food ordering application providing features like restaurant 
 ## Project Structure
 - **Backend**: Controllers, Models, Routes, Middleware, Server
 - **Frontend**: Components, Pages, Context, Utils, App.js
-
-## Future Enhancements
-- Real-time order tracking
-- AI-based food recommendations
-- Multi-language support

@@ -1,4 +1,4 @@
-# Food Ordering Web Application (MERN Stack)
+# FlavorFleet Food Ordering Web Application (MERN Stack)
 
 ## Overview
 A MERN stack-based food ordering application providing features like restaurant browsing, menu viewing, cart management, and order placement.

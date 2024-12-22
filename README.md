@@ -43,11 +43,6 @@ A MERN stack-based food ordering application providing features like restaurant 
 - **Backend**: Controllers, Models, Routes, Middleware, Server
 - **Frontend**: Components, Pages, Context, Utils, App.js
 
-## API Endpoints
-- User: `/api/users/register`, `/api/users/login`, `/api/users/profile`
-- Restaurants: `/api/restaurants`, `/api/restaurants/:id`
-- Orders: `/api/orders`, `/api/orders/:userId`
-
 ## Future Enhancements
 - Real-time order tracking
 - AI-based food recommendations
